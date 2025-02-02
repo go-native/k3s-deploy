@@ -14,6 +14,31 @@ A CLI tool that simplifies the process of deploying applications to single-node 
 
 ## Installation
 
+### macOS
+
+#### Intel / x86_64
+```bash
+wget https://github.com/go-native/k3s-deploy/releases/download/v0.1.0/k3s-deploy-macos-amd64
+chmod +x k3s-deploy-macos-amd64
+sudo mv k3s-deploy-macos-amd64 /usr/local/bin/k3s-deploy
+```
+
+#### Apple Silicon / ARM
+```bash
+wget https://github.com/go-native/k3s-deploy/releases/download/v0.1.0/k3s-deploy-macos-arm64
+chmod +x k3s-deploy-macos-arm64
+sudo mv k3s-deploy-macos-arm64 /usr/local/bin/k3s-deploy
+```
+
+### Linux
+
+#### x86_64
+```bash
+wget https://github.com/go-native/k3s-deploy/releases/download/v0.1.0/k3s-deploy-linux-amd64
+chmod +x k3s-deploy-linux-amd64
+sudo mv k3s-deploy-linux-amd64 /usr/local/bin/k3s-deploy
+```
+
 ## Quick Start
 
 1. Initialize configuration:

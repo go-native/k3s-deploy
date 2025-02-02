@@ -46,15 +46,16 @@ server:
   ssh_key: ~/.ssh/id_rsa # SSH key to connect to the server
   password: # Optional, if you want to use password instead of ssh key
 
-domain: example.com # 
-redirect_www: true # if you want to redirect www to non-www
+traffic:
+  domain: example.com # 
+  tsl: true # if you want to use tsl
+  redirect_www: true # if you want to redirect www to non-www
+  email: my-email@example.com # email to use for the certificate
 env:
   clear:
     DB_HOST: localhost
   secrets:
-    DB_PASSWORD:
-      fromFile: .env
-      fromEnv: DB_PASSWORD
+    - DB_PASSWORD
 `
 
 	return os.WriteFile("deploy.yml", []byte(configTemplate), 0644)

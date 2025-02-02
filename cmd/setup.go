@@ -16,17 +16,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type ServerConfig struct {
-	IP       string `yaml:"ip"`
-	User     string `yaml:"user"`
-	SSHKey   string `yaml:"ssh_key"`
-	Password string `yaml:"password"`
-}
-
-type Config struct {
-	Server ServerConfig `yaml:"server"`
-}
-
 var setupCmd = &cobra.Command{
 	Use:   "setup",
 	Short: "Setup k3s cluster and required components",
@@ -59,6 +48,8 @@ func setupCluster() error {
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return fmt.Errorf("failed to parse deploy.yml: %v", err)
 	}
+
+	// Generate Helm charts before SSH connection
 
 	// Create SSH client
 	var auth goph.Auth
