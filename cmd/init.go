@@ -39,7 +39,8 @@ image:
   registry:
     server: ghcr.io
     username: my-user
-    password: my-password
+    password:
+	  - GITHUB_TOKEN # comes from env variable
 server: 
   ip: 192.168.1.100 # Server to setup k3s cluster
   user: root

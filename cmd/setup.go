@@ -124,7 +124,33 @@ func setupCluster() error {
 		return fmt.Errorf("failed to install cert-manager: %v", err)
 	}
 
+	fmt.Println("Waiting for cert-manager to be ready...")
+	time.Sleep(30 * time.Second)
+
+	fmt.Println("Creating ClusterIssuer for Let's Encrypt...")
+
+	clusterIssuerCmd := fmt.Sprintf(`echo 'apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: lets-encrypt-issuer
+spec:
+  acme:
+    email: %s
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-account-key
+    solvers:
+      - http01:
+          ingress:
+            class: traefik' | kubectl apply -f -`, config.Service.Email)
+
+	_, err = client.Run(clusterIssuerCmd)
+	if err != nil {
+		return fmt.Errorf("failed to create cluster issuer: %v", err)
+	}
+
 	fmt.Println("Setup completed successfully!")
+
 	return nil
 }
 

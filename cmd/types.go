@@ -12,9 +12,9 @@ type Config struct {
 	Image struct {
 		Name     string `yaml:"name"`
 		Registry struct {
-			Server   string `yaml:"server"`
-			Username string `yaml:"username"`
-			Password string `yaml:"password"`
+			Server   string   `yaml:"server"`
+			Username string   `yaml:"username"`
+			Password []string `yaml:"password"`
 		} `yaml:"registry"`
 	} `yaml:"image"`
 	Server  ServerConfig `yaml:"server"`
@@ -26,7 +26,7 @@ type Config struct {
 		Port        int    `yaml:"port"`
 	} `yaml:"service"`
 	Env struct {
-		Clear   map[string]string `yaml:"clear"`
-		Secrets []string          `yaml:"secrets"`
+		Clear   interface{} `yaml:"clear"`
+		Secrets []string    `yaml:"secrets"`
 	} `yaml:"env"`
 }
