@@ -48,28 +48,30 @@ k3s-deploy init
 
 2. Edit the generated `deploy.yml` file with your server details:
 ```yaml
-service: my-app
+service: my-app # This becomes the name in the Chart.yaml 
 image:
   name: my-user/my-app
   registry:
     server: ghcr.io
     username: my-user
-    password: my-password
+    password:
+      - GITHUB_TOKEN # Injected from env variable
 server: 
-  ip: 192.168.1.100
+  ip: 192.168.1.100 # Server to setup k3s cluster
   user: root
-  ssh_key: ~/.ssh/id_rsa
-  # password: optional_password  # Alternative to SSH key
+  ssh_key: ~/.ssh/id_rsa # SSH key to connect to the server
+  password: # Optional, if you want to use password instead of ssh key
 
-domain: example.com
-redirect_www: true
+traffic:
+  domain: example.com # 
+  tsl: true # If you want to use tsl
+  redirect_www: true # If you want to redirect www to non-www
+  email: my-email@example.com # Email to use for the certificate
 env:
   clear:
     DB_HOST: localhost
   secrets:
-    DB_PASSWORD:
-      fromFile: .env
-      fromEnv: DB_PASSWORD
+    - DB_PASSWORD
 ```
 
 3. Set up your K3s server:
@@ -86,7 +88,7 @@ k3s-deploy deploy
 
 - `init` - Generate a default deploy.yml configuration file
 - `setup` - Install and configure K3s on your server
-- `deploy` - Deploy your application to the K3s cluster
+- `deploy` - Generate Helm templates based on deploy.yml and deploy your application to the K3s cluster
 
 ## Server Requirements
 
@@ -110,7 +112,8 @@ The `deploy.yml` file supports the following configuration options:
   - `registry`: Container registry settings
     - `server`: Registry server URL
     - `username`: Registry username
-    - `password`: Registry password
+    - `password`: Registry password (from environment variable)
+  - `port`: Application container port
 
 ### Server Configuration
 - `server`: K3s server settings
@@ -119,14 +122,20 @@ The `deploy.yml` file supports the following configuration options:
   - `ssh_key`: Path to SSH private key
   - `password`: SSH password (alternative to SSH key)
 
-### Domain Configuration
-- `domain`: Your application domain
-- `redirect_www`: Enable www to non-www redirect
+### Traffic Configuration
+- `traffic`: Domain and TLS settings
+  - `domain`: Your application domain
+  - `tls`: Enable HTTPS with Let's Encrypt
+  - `redirect_www`: Enable www to non-www redirect
+  - `email`: Email for Let's Encrypt certificate
+  - `port`: Application port number
 
 ### Environment Variables
 - `env.clear`: Non-sensitive environment variables
+  - Can be direct values or environment variable references
 - `env.secrets`: Sensitive environment variables
-  - Support for loading from environment or file
+  - Always loaded from environment variables
+  - Stored as Kubernetes secrets
 
 ## Security
 

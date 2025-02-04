@@ -129,6 +129,20 @@ func setupCluster() error {
 
 	fmt.Println("Creating ClusterIssuer for Let's Encrypt...")
 
+	fmt.Println("Checking for existing ClusterIssuer...")
+	checkIssuerCmd := "kubectl get clusterissuer lets-encrypt-issuer --output name 2>/dev/null || true"
+	output, err := client.Run(checkIssuerCmd)
+	if err != nil {
+		return fmt.Errorf("failed to check for existing cluster issuer: %v", err)
+	}
+
+	if strings.TrimSpace(string(output)) != "" {
+		fmt.Println("ClusterIssuer already exists, skipping creation...")
+		return nil
+	}
+
+	fmt.Println("Creating ClusterIssuer for Let's Encrypt...")
+
 	clusterIssuerCmd := fmt.Sprintf(`echo 'apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:

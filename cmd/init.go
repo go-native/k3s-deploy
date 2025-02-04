@@ -40,7 +40,7 @@ image:
     server: ghcr.io
     username: my-user
     password:
-	  - GITHUB_TOKEN # comes from env variable
+	    - GITHUB_TOKEN # Injected from env variable
 server: 
   ip: 192.168.1.100 # Server to setup k3s cluster
   user: root
@@ -49,14 +49,15 @@ server:
 
 traffic:
   domain: example.com # 
-  tsl: true # if you want to use tsl
-  redirect_www: true # if you want to redirect www to non-www
-  email: my-email@example.com # email to use for the certificate
+  tsl: true # If you want to use tsl
+  redirect_www: true # If you want to redirect www to non-www
+  email: my-email@example.com # Email to use for the certificate
 env:
   clear:
     DB_HOST: localhost
   secrets:
     - DB_PASSWORD
+
 `
 
 	return os.WriteFile("deploy.yml", []byte(configTemplate), 0644)
