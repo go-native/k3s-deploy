@@ -237,7 +237,7 @@ name: %s
 type: application
 version: 0.1.0
 appVersion: "1.16.0"
-`, config.Name)
+`, config.Service)
 
 	return mergeYAMLFile(filepath, []byte(newContent))
 }
@@ -290,7 +290,7 @@ func generateIngressRule(domain string) string {
 func generateIngressYAML(config *Config) string {
 	var content strings.Builder
 
-	if config.Service.RedirectWWW {
+	if config.Traffic.RedirectWWW {
 		content.WriteString(fmt.Sprintf(`apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
@@ -302,7 +302,7 @@ spec:
     replacement: https://%s/${1}
     permanent: true
 ---
-`, config.Service.Domain, config.Service.Domain))
+`, config.Traffic.Domain, config.Traffic.Domain))
 	}
 
 	content.WriteString(`apiVersion: networking.k8s.io/v1
@@ -313,14 +313,14 @@ metadata:
   annotations:
 `)
 
-	if config.Service.TSL {
+	if config.Traffic.TSL {
 		content.WriteString(`    traefik.ingress.kubernetes.io/router.entrypoints: websecure
     cert-manager.io/cluster-issuer: "lets-encrypt-issuer"
     traefik.ingress.kubernetes.io/router.tls: "true"
 `)
 	}
 
-	if config.Service.RedirectWWW {
+	if config.Traffic.RedirectWWW {
 		content.WriteString(`    traefik.ingress.kubernetes.io/router.middlewares: {{ .Release.Namespace }}-redirect-www@kubernetescrd
 `)
 	}
@@ -329,11 +329,11 @@ metadata:
   tls:
     - hosts:
         - "%s"
-`, config.Service.Domain))
+`, config.Traffic.Domain))
 
-	if config.Service.RedirectWWW {
+	if config.Traffic.RedirectWWW {
 		content.WriteString(fmt.Sprintf(`        - "www.%s"
-`, config.Service.Domain))
+`, config.Traffic.Domain))
 	}
 
 	content.WriteString(`      secretName: {{ .Release.Name }}-ingress-tls
@@ -341,11 +341,11 @@ metadata:
 `)
 
 	// Add main domain rule
-	content.WriteString(generateIngressRule(config.Service.Domain))
+	content.WriteString(generateIngressRule(config.Traffic.Domain))
 
 	// Add www domain rule if redirect is enabled
-	if config.Service.RedirectWWW {
-		content.WriteString(generateIngressRule("www." + config.Service.Domain))
+	if config.Traffic.RedirectWWW {
+		content.WriteString(generateIngressRule("www." + config.Traffic.Domain))
 	}
 
 	return content.String()
@@ -374,7 +374,7 @@ spec:
           image: %s
           ports:
             - containerPort: %d
-`, config.Image.Name, config.Service.Port))
+`, config.Image.Name, config.Traffic.Port))
 
 	// Add environment variables from clear section
 	switch v := config.Env.Clear.(type) {
@@ -421,7 +421,7 @@ spec:
       targetPort: %d
   selector:
     app: {{ .Release.Name }}
-`, config.Service.Port)
+`, config.Traffic.Port)
 }
 
 func generateSecretsYAML(config *Config) string {
@@ -565,9 +565,9 @@ func deployWithHelm(config *Config) error {
 	args := []string{
 		"upgrade",
 		"--install",
-		config.Name,
+		config.Service,
 		"./helm",
-		"-n", config.Name,
+		"-n", config.Service,
 		"--create-namespace",
 		"--history-max", "1",
 	}

@@ -156,7 +156,7 @@ spec:
     solvers:
       - http01:
           ingress:
-            class: traefik' | kubectl apply -f -`, config.Service.Email)
+            class: traefik' | kubectl apply -f -`, config.Traffic.Email)
 
 	_, err = client.Run(clusterIssuerCmd)
 	if err != nil {

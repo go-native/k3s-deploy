@@ -8,8 +8,8 @@ type ServerConfig struct {
 }
 
 type Config struct {
-	Name  string `yaml:"name"`
-	Image struct {
+	Service string `yaml:"service"` // Top level service name
+	Image   struct {
 		Name     string `yaml:"name"`
 		Registry struct {
 			Server   string   `yaml:"server"`
@@ -18,13 +18,13 @@ type Config struct {
 		} `yaml:"registry"`
 	} `yaml:"image"`
 	Server  ServerConfig `yaml:"server"`
-	Service struct {
+	Traffic struct {
 		Domain      string `yaml:"domain"`
 		TSL         bool   `yaml:"tsl"`
 		RedirectWWW bool   `yaml:"redirect_www"`
 		Email       string `yaml:"email"`
 		Port        int    `yaml:"port"`
-	} `yaml:"service"`
+	} `yaml:"traffic"`
 	Env struct {
 		Clear   interface{} `yaml:"clear"`
 		Secrets []string    `yaml:"secrets"`
