@@ -1,4 +1,4 @@
-package cmd
+package types
 
 type ServerConfig struct {
 	IP       string `yaml:"ip"`
@@ -8,7 +8,7 @@ type ServerConfig struct {
 }
 
 type Config struct {
-	Service string `yaml:"service"` // Top level service name
+	Service string `yaml:"service"`
 	Image   struct {
 		Name     string `yaml:"name"`
 		Registry struct {

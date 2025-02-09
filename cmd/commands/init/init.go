@@ -1,7 +1,4 @@
-/*
-Copyright © 2025 Taron Mehrabyan <EMAIL ADDRESS>
-*/
-package cmd
+package init
 
 import (
 	"fmt"
@@ -10,21 +7,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Generate deploy.yml configuration file",
-	Long:  `Generate a deploy.yml configuration file in the current directory with default values`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := generateConfig(); err != nil {
-			fmt.Printf("Error: %v\n", err)
-			os.Exit(1)
-		}
-		fmt.Println("Successfully created deploy.yml")
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(initCmd)
+func NewCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "init",
+		Short: "Generate deploy.yml configuration file",
+		Long:  `Generate a deploy.yml configuration file in the current directory with default values`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return generateConfig()
+		},
+	}
+	return cmd
 }
 
 func generateConfig() error {
@@ -59,6 +51,5 @@ env:
   secrets:
     - DB_PASSWORD
 `
-
 	return os.WriteFile("deploy.yml", []byte(configTemplate), 0644)
 }
